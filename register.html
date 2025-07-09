@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register - PhishThePhisher</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QJ623ZFV57"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-QJ623ZFV57');
+  </script>
+</head>
+<body>
+  <header class="header">
+    <a href="index.html" class="logo" title="Home">
+      <img src="logo.png" alt="PhishThePhisher logo" style="height:70px;vertical-align:middle;">
+    </a>
+    <div class="header-actions">
+      <a href="index.html" class="header-link">Home</a>
+      <a href="pricing.html" class="header-link">Pricing</a>
+      <a href="login.html" class="header-link btn-signin">Sign In</a>
+    </div>
+  </header>
+  <main class="content-page" style="display:flex;justify-content:center;align-items:center;min-height:70vh;background:#f8f9fa;">
+    <section class="auth-section" style="background:#fff;border-radius:16px;box-shadow:0 2px 16px #e0e6ed;padding:36px 32px;max-width:370px;width:100%;margin:32px auto;">
+      <h1 style="text-align:center;color:#1a2a6c;font-size:2rem;font-weight:800;margin-bottom:24px;letter-spacing:0.5px;">Create Your Account</h1>
+      <form id="register-form" class="input-card" style="display:flex;flex-direction:column;gap:18px;">
+        <input type="email" id="reg-email" placeholder="Email" required style="padding:12px;font-size:1.08rem;border-radius:8px;border:1px solid #d0d7e2;" />
+        <input type="password" id="reg-password" placeholder="Password" required minlength="6" style="padding:12px;font-size:1.08rem;border-radius:8px;border:1px solid #d0d7e2;" />
+        <button type="submit" class="btn-primary" style="background:#3a64f0;color:#fff;font-weight:700;font-size:1.1rem;padding:12px 0;border-radius:8px;transition:background 0.2s;">Register</button>
+      </form>
+      <p style="text-align:center; margin-top:18px;font-size:1rem;">Already have an account? <a href="login.html" style="color:#3a64f0;font-weight:600;">Sign in</a></p>
+      <div id="register-error" class="error-message" style="color:#e53935;text-align:center;margin-top:10px;font-weight:600;"></div>
+    </section>
+  </main>
+  <footer class="footer upgraded-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <img src="logo.png" alt="PhishThePhisher logo" style="height:38px;vertical-align:middle;margin-bottom:8px;">
+        <div class="brand-text" style="font-weight:bold;font-size:1.2rem;">PhishThePhisher</div>
+        <div class="footer-slogan">Turn the tables on scammers with AI-powered protection.</div>
+      </div>
+      <div class="footer-columns">
+        <div class="footer-col">
+          <h5>Support</h5>
+          <ul>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Legal</h5>
+          <ul>
+            <li><a href="terms.html">Terms of Service</a></li>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="refund.html">Refund Policy</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Connect</h5>
+          <ul class="footer-social">
+            <li><a href="mailto:support@phisthephisher.com" aria-label="Email">📧 Email</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <div class="copyright upgraded-copyright">
+    © 2025 PhishThePhisher. All rights reserved.
+  </div>
+  <script src="script.js"></script>
+</body>
+</html> 

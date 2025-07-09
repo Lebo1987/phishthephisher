@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact - PhishThePhisher</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QJ623ZFV57"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-QJ623ZFV57');
+  </script>
+</head>
+<body>
+  <header class="header">
+    <a href="index.html" class="logo" title="Home">
+      <img src="logo.png" alt="PhishThePhisher logo" style="height:70px;vertical-align:middle;">
+    </a>
+    <div class="header-actions">
+      <a href="index.html" class="header-link">Home</a>
+      <a href="pricing.html" class="header-link">Pricing</a>
+      <a href="login.html" class="header-link btn-signin">Sign In</a>
+    </div>
+  </header>
+  <main class="content-page">
+    <h1 style="text-align:center; color:#1a2a6c; margin-bottom:32px;">Contact Us <span style="font-size:1.2em;">✉️</span></h1>
+    <p style="text-align:center;">Have a question, suggestion, or need support? Fill out the form below or email us at <a href="mailto:support@phishthephisher.com">support@phishthephisher.com</a>.</p>
+    <form class="contact-form" id="contactForm" method="post" action="#">
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" required>
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required>
+      <label for="message">Message</label>
+      <textarea id="message" name="message" rows="5" required></textarea>
+      <button type="submit">Send</button>
+    </form>
+    <div id="contact-status" style="text-align:center;margin-top:10px;"></div>
+  </main>
+  <footer class="footer upgraded-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <img src="logo.png" alt="PhishThePhisher logo" style="height:38px;vertical-align:middle;margin-bottom:8px;">
+        <div class="brand-text" style="font-weight:bold;font-size:1.2rem;">PhishThePhisher</div>
+        <div class="footer-slogan">Turn the tables on scammers with AI-powered protection.</div>
+      </div>
+      <div class="footer-columns">
+        <div class="footer-col">
+          <h5>Support</h5>
+          <ul>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Legal</h5>
+          <ul>
+            <li><a href="terms.html">Terms of Service</a></li>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="refund.html">Refund Policy</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Connect</h5>
+          <ul class="footer-social">
+            <li><a href="mailto:support@phisthephisher.com" aria-label="Email">📧 Email</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <div class="copyright upgraded-copyright">
+    © 2025 PhishThePhisher. All rights reserved.
+  </div>
+</body>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('contactForm');
+  const statusDiv = document.getElementById('contact-status');
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    statusDiv.textContent = '';
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const message = document.getElementById('message').value;
+    try {
+      const res = await fetch('http://127.0.0.1:5000/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, message })
+      });
+      const data = await res.json();
+      if (data.success) {
+        statusDiv.style.color = 'green';
+        statusDiv.textContent = 'Message sent successfully!';
+        form.reset();
+      } else {
+        statusDiv.style.color = 'red';
+        statusDiv.textContent = data.error || 'Failed to send message.';
+      }
+    } catch (err) {
+      statusDiv.style.color = 'red';
+      statusDiv.textContent = 'Server error. Please try again later.';
+    }
+  });
+});
+</script>
+</html> 

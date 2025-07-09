@@ -1,0 +1,12 @@
+<svg width="180" height="48" viewBox="0 0 180 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g>
+    <path d="M24 6 L36 12 V24 C36 34 24 42 24 42 C24 42 12 34 12 24 V12 L24 6 Z" fill="#3a64f0" stroke="#1a2a6c" stroke-width="2"/>
+    <ellipse cx="24" cy="22" rx="7" ry="4" fill="#fff" stroke="#1a2a6c" stroke-width="1.2"/>
+    <circle cx="28" cy="22" r="1" fill="#3a64f0"/>
+    <path d="M31 22 Q33 20 35 22 Q33 24 31 22" fill="#3a64f0"/>
+    <path d="M18 18 Q16 24 24 28" stroke="#1a2a6c" stroke-width="1.2" fill="none"/>
+  </g>
+  <text x="48" y="32" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="bold" fill="#1a2a6c" letter-spacing="1">
+    PhishThePhisher
+  </text>
+</svg> 

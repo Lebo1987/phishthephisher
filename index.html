@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PhishThePhisher - AI Scam Detection</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QJ623ZFV57"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-QJ623ZFV57');
+  </script>
+</head>
+<body>
+  <header class="header">
+    <a href="index.html" class="logo">
+      <img src="logo.png" alt="PhishThePhisher logo" style="height:70px;vertical-align:middle;">
+    </a>
+    <div class="header-actions">
+      <a href="pricing.html" class="header-link">Pricing</a>
+      <a href="login.html" class="header-link btn-signin">Sign In</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>Is this message a <span class="highlight">scam</span>?</h1>
+      <p>
+        Let AI analyze any suspicious message — from email, WhatsApp, Telegram,
+        Facebook, or SMS. Get instant protection using advanced detection
+        technology.
+      </p>
+
+      <!-- 👇 טופס לזיהוי הודעות -->
+      <form id="analyze-form" class="input-card">
+        <textarea id="message" placeholder="Paste your suspicious message here..."></textarea>
+        <div class="usage-counter">
+          <span id="remaining-analyses">3</span> free analyses remaining
+          <button id="reset-usage" style="margin-left: 10px; font-size: 12px; padding: 2px 8px;">Reset</button>
+        </div>
+        <button type="submit" id="analyze-button">🔎 Detect Risk</button>
+      </form>
+      
+      <div style="text-align: center; margin-top: 20px;">
+        <span style="background: #f8f9fa; color: #6c757d; padding: 8px 16px; border-radius: 20px; font-size: 14px; border: 1px solid #dee2e6;">
+          Current Plan: Free (3 analyses/month)
+        </span>
+      </div>
+
+      <div class="upload-area">
+        <p>Or upload a screenshot</p>
+        <input type="file" id="imageInput" style="display: none;" />
+        <button id="uploadBtn">📁 Upload Image</button>
+      </div>
+
+      <!-- 👇 כאן תוצג התוצאה -->
+      <div id="result"></div>
+
+      <!-- Payment Modal -->
+      <div id="payment-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 id="modal-title">Premium Required</h3>
+            <span class="close">&times;</span>
+          </div>
+          <div class="modal-body">
+            <p id="modal-message">Analysis in languages other than English requires a premium subscription.</p>
+            <div class="modal-actions">
+              <button id="continue-btn" class="btn-primary">Continue with Premium</button>
+              <button id="cancel-btn" class="btn-secondary">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="examples">
+      <h2>See How It Works</h2>
+      <p>Try these examples to see our AI in action</p>
+
+      <div class="card-row">
+        <div class="example-card danger">
+          <h3>Phishing Attempt</h3>
+          <p>
+            "URGENT! Your account will be suspended! Click here immediately to
+            verify your identity and avoid account closure."
+          </p>
+          <span class="confidence red">95% confidence</span>
+        </div>
+        <div class="example-card warning">
+          <h3>Suspicious Offer</h3>
+          <p>
+            "You've been selected for a $500 reward. Just reply with your info!"
+          </p>
+          <span class="confidence orange">78% confidence</span>
+        </div>
+        <div class="example-card safe">
+          <h3>Legitimate Message</h3>
+          <p>
+            "Your order has been shipped. Tracking #: 123456789."
+          </p>
+          <span class="confidence green">92% confidence</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="features">
+      <h2>How Our AI Detects Scams</h2>
+      <p>Advanced AI analyzes multiple factors to protect you</p>
+
+      <div class="features-row">
+        <div class="feature-card">
+          <h4>⚡ Instant Analysis</h4>
+          <p>Scans your message instantly for risk signals.</p>
+        </div>
+        <div class="feature-card">
+          <h4>🧠 Smart Detection</h4>
+          <p>Trained on millions of real scam patterns and fraud attempts.</p>
+        </div>
+        <div class="feature-card">
+          <h4>🛡️ Risk Assessment</h4>
+          <p>Color-coded result with confidence score and explanation.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer upgraded-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <img src="logo.png" alt="PhishThePhisher logo" style="height:38px;vertical-align:middle;margin-bottom:8px;">
+        <div class="brand-text" style="font-weight:bold;font-size:1.2rem;">PhishThePhisher</div>
+        <div class="footer-slogan">Turn the tables on scammers with AI-powered protection.</div>
+    </div>
+      <div class="footer-columns">
+        <div class="footer-col">
+        <h5>Support</h5>
+        <ul>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Legal</h5>
+          <ul>
+            <li><a href="terms.html">Terms of Service</a></li>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="refund.html">Refund Policy</a></li>
+        </ul>
+      </div>
+        <div class="footer-col">
+        <h5>Connect</h5>
+          <ul class="footer-social">
+            <li><a href="mailto:support@phisthephisher.com" aria-label="Email">📧 Email</a></li>
+        </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <div class="copyright upgraded-copyright">
+    © 2025 PhishThePhisher. All rights reserved.
+  </div>
+
+  <!-- ✅ קובץ הסקריפט המעודכן -->
+  <script src="script.js"></script>
+</body>
+</html>
