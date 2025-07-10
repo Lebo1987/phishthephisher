@@ -44,6 +44,10 @@ def extract_text_with_ocr(image):
         print(f"OCR Error: {e}")
         return ""
 
+@app.route("/")
+def home():
+    return send_from_directory('.', 'index.html')
+
 @app.route("/analyze", methods=["POST"])
 def analyze_message():
     data = request.get_json()
@@ -71,7 +75,10 @@ def analyze_message():
             "You are a risk analyzer for phishing messages. "
             "Give a score between 0-100 for risk level: "
             "0=safe, 100=definite phishing. "
-            "Also indicate if this is a safe, suspicious, or phishing message, and explain briefly why."
+            "Also indicate if this is a safe, suspicious, or phishing message, and explain briefly why. "
+            "If the message contains a link to a login page (such as https://login.microsoftonline.com/...), "
+            "analyze the link and try to determine if it could be part of an OAUTH or Entra-enabled phishing attack. "
+            "Look for suspicious client_id, redirect_uri, or unusual permission scopes."
         )
 
         # שליחת ההודעה ל־GPT
