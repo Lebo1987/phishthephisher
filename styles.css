@@ -1,7 +1,7 @@
 body {
   margin: 0;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: #f7f9fc;
+  background: #eceff1;
   color: #1a1a1a;
 }
 
@@ -999,19 +999,21 @@ body {
     align-items: center;
     flex-wrap: wrap;
     gap: 24px;
-    padding: 0 2vw;
+    padding: 0 0;
   }
   
   .pricing-card {
-    min-width: 96vw;
+    min-width: 0;
+    width: 96vw;
     max-width: 98vw;
-    margin-bottom: 0;
+    margin: 0 auto 0 auto;
     border-radius: 22px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    box-shadow: 0 6px 32px rgba(0,0,0,0.13);
     padding: 28px 6vw 28px 6vw;
     box-sizing: border-box;
     align-items: center;
     text-align: center;
+    background: #fff;
   }
   .plan-header, .plan-description, .plan-features, .plan-button {
     text-align: center;
