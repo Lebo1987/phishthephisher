@@ -44,6 +44,35 @@ def extract_text_with_ocr(image):
         print(f"OCR Error: {e}")
         return ""
 
+# --- Smart OAuth/Entra Consent Screen Detection ---
+OAUTH_KEYWORDS = [
+    "permissions requested", "this app would like to", "consent", "application", "publisher",
+    "accept", "cancel", "sign in", "microsoft", "google", "redirect uri", "client id"
+]
+SUSPICIOUS_PERMISSIONS = [
+    "read mail", "send mail", "manage mailbox", "read contacts", "read files", "write files",
+    "user.readwrite.all", "directory.readwrite.all", "exchange.manageasapp"
+]
+
+def detect_oauth_consent_screen(text):
+    matches = [kw for kw in OAUTH_KEYWORDS if kw in text]
+    return len(matches) >= 3
+
+def extract_suspicious_permissions(text):
+    return [perm for perm in SUSPICIOUS_PERMISSIONS if perm in text]
+
+def extract_app_info(text):
+    import re
+    app_name = None
+    publisher = None
+    app_match = re.search(r'application:? ([\w\s\.\-]+)', text)
+    pub_match = re.search(r'publisher:? ([\w\s\.\-]+)', text)
+    if app_match and app_match.group(1):
+        app_name = app_match.group(1).strip()
+    if pub_match and pub_match.group(1):
+        publisher = pub_match.group(1).strip()
+    return app_name, publisher
+
 @app.route("/")
 def home():
     return send_from_directory('.', 'index.html')
@@ -176,7 +205,9 @@ def analyze_image():
             )
 
             reply = response.choices[0].message.content.strip()
-            
+            # --- Smart OAuth/Entra detection on extracted text from Vision (if possible) ---
+            extracted_text = extract_text_with_ocr(image)
+        
         except Exception as gpt_error:
             print(f"GPT-4 Vision failed: {gpt_error}")
             # Fallback to OCR + text analysis
@@ -218,11 +249,31 @@ def analyze_image():
         reasons = re.split(r'\. |\n', reply)
         reasons = [r.strip("•*- ") for r in reasons if r.strip()]
 
-        return jsonify({
+        # --- Smart OAuth/Entra Consent Screen Detection ---
+        oauth_alert = None
+        if extracted_text:
+            text_lc = extracted_text.lower()
+            if detect_oauth_consent_screen(text_lc):
+                app_name, publisher = extract_app_info(text_lc)
+                permissions = extract_suspicious_permissions(text_lc)
+                oauth_alert = "⚠️ זוהה מסך הרשאות OAUTH/Entra.\n"
+                if app_name:
+                    oauth_alert += f"שם האפליקציה: {app_name}\n"
+                if publisher:
+                    oauth_alert += f"Publisher: {publisher}\n"
+                if permissions:
+                    oauth_alert += f"הרשאות חשודות: {', '.join(permissions)}\n"
+                oauth_alert += "אם אינך מזהה את האפליקציה או ההרשאות – אל תאשר!"
+
+        response_json = {
             "score": score,
             "level": level,
             "reasons": reasons
-        })
+        }
+        if oauth_alert:
+            response_json["oauth_alert"] = oauth_alert
+
+        return jsonify(response_json)
 
     except Exception as e:
         print("❌ Image analysis error:\n", e)
@@ -308,4 +359,5 @@ def serve_static(filename):
     return send_from_directory('.', filename)
 
 if __name__ == "__main__":
+    app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=False)
