@@ -358,7 +358,7 @@ async function performAnalysis() {
       if (data.level === "safe" || data.level === "suspicious") {
         const disclaimer = document.createElement('div');
         disclaimer.className = 'disclaimer';
-        disclaimer.innerHTML = '<span style="font-size:1.1em;">ℹ️</span> Even with advanced detection, use caution and your best judgment.';
+        disclaimer.innerHTML = '<span style="font-size:1.1em;">ℹ️</span> Even though we strive for 100% detection, use caution and your best judgment.';
         resultContainer.appendChild(disclaimer);
       }
     } else {
