@@ -1185,3 +1185,15 @@ body {
     padding: 22px 4vw 18px 4vw;
   }
 }
+
+.disclaimer {
+  margin: 24px auto 0 auto;
+  max-width: 500px;
+  color: #666;
+  font-size: 0.98em;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 12px 18px;
+  text-align: center;
+  border: 1px solid #e0e0e0;
+}

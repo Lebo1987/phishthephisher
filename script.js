@@ -353,6 +353,14 @@ async function performAnalysis() {
           <div class="confidence ${colorClass}">${confidence}% confidence</div>
         </div>
       `;
+
+      // הצג disclaimer רק בתוצאות ירוקות/כתומות
+      if (data.level === "safe" || data.level === "suspicious") {
+        const disclaimer = document.createElement('div');
+        disclaimer.className = 'disclaimer';
+        disclaimer.innerHTML = '<span style="font-size:1.1em;">ℹ️</span> Even with advanced detection, use caution and your best judgment.';
+        resultContainer.appendChild(disclaimer);
+      }
     } else {
       resultContainer.innerHTML = `<p style="color:red;">❌ ${data.error || "No response received."}</p>`;
     }
