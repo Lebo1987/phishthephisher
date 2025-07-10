@@ -998,12 +998,28 @@ body {
     flex-direction: column;
     align-items: center;
     flex-wrap: wrap;
+    gap: 24px;
+    padding: 0 2vw;
   }
   
   .pricing-card {
-    min-width: 100%;
-    max-width: 100%;
-    margin-bottom: 20px;
+    min-width: 96vw;
+    max-width: 98vw;
+    margin-bottom: 0;
+    border-radius: 22px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    padding: 28px 6vw 28px 6vw;
+    box-sizing: border-box;
+    align-items: center;
+    text-align: center;
+  }
+  .plan-header, .plan-description, .plan-features, .plan-button {
+    text-align: center;
+    align-items: center;
+  }
+  .plan-features li {
+    text-align: left;
+    padding-left: 10px;
   }
 }
 
