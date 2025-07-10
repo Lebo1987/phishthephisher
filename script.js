@@ -312,7 +312,7 @@ async function performAnalysis() {
   resultContainer.innerHTML = "";
 
   try {
-    const response = await fetch("http://127.0.0.1:5000/analyze", {
+    const response = await fetch("/analyze", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -409,7 +409,7 @@ if (imageInput) {
       const formData = new FormData();
       formData.append('image', file);
 
-      const response = await fetch("http://127.0.0.1:5000/analyze-image", {
+      const response = await fetch("/analyze-image", {
         method: "POST",
         body: formData,
       });
