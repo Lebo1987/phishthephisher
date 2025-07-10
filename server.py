@@ -102,6 +102,7 @@ GOOGLE_SAFE_BROWSING_API_KEY = "AIzaSyDwYZT2-OQTpk3ynfSXQJV_Q688xtQ5-PA"
 SAFE_BROWSING_URL = "https://safebrowsing.googleapis.com/v4/threatMatches:find?key=" + GOOGLE_SAFE_BROWSING_API_KEY
 
 def check_url_safe_browsing(url):
+    print(f"[SafeBrowsing] Checking URL: {url}")
     payload = {
         "client": {
             "clientId": "phishthephisher",
@@ -120,9 +121,11 @@ def check_url_safe_browsing(url):
         resp = requests.post(SAFE_BROWSING_URL, json=payload, timeout=5)
         resp.raise_for_status()
         data = resp.json()
-        return bool(data.get("matches"))
+        is_flagged = bool(data.get("matches"))
+        print(f"[SafeBrowsing] Result for {url}: {is_flagged}")
+        return is_flagged
     except Exception as e:
-        print(f"Safe Browsing API error: {e}")
+        print(f"[SafeBrowsing] API error for {url}: {e}")
         return False
 
 @app.route("/")
