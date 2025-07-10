@@ -73,6 +73,28 @@ def extract_app_info(text):
         publisher = pub_match.group(1).strip()
     return app_name, publisher
 
+# --- Whitelist/Blacklist loading ---
+WHITELIST_PATH = 'oauth_whitelist.txt'
+BLACKLIST_PATH = 'oauth_blacklist.txt'
+
+def load_list(path):
+    if not os.path.exists(path):
+        return set()
+    with open(path, encoding='utf-8') as f:
+        return set(line.strip().lower() for line in f if line and line.strip())
+
+def check_whitelist_blacklist(app_name, publisher):
+    whitelist = load_list(WHITELIST_PATH)
+    blacklist = load_list(BLACKLIST_PATH)
+    app_name = (app_name or '').lower()
+    publisher = (publisher or '').lower()
+    # Check both app name and publisher
+    if app_name in blacklist or publisher in blacklist:
+        return 'blacklist'
+    if app_name in whitelist or publisher in whitelist:
+        return 'whitelist'
+    return 'unknown'
+
 @app.route("/")
 def home():
     return send_from_directory('.', 'index.html')
@@ -256,6 +278,8 @@ def analyze_image():
             if detect_oauth_consent_screen(text_lc):
                 app_name, publisher = extract_app_info(text_lc)
                 permissions = extract_suspicious_permissions(text_lc)
+                # Whitelist/Blacklist cross-check
+                wl_status = check_whitelist_blacklist(app_name, publisher)
                 oauth_alert = "⚠️ זוהה מסך הרשאות OAUTH/Entra.\n"
                 if app_name:
                     oauth_alert += f"שם האפליקציה: {app_name}\n"
@@ -263,13 +287,20 @@ def analyze_image():
                     oauth_alert += f"Publisher: {publisher}\n"
                 if permissions:
                     oauth_alert += f"הרשאות חשודות: {', '.join(permissions)}\n"
-                oauth_alert += "אם אינך מזהה את האפליקציה או ההרשאות – אל תאשר!"
+                if wl_status == 'blacklist':
+                    oauth_alert += "אזהרה: אפליקציה זו מופיעה ברשימת חסומות (blacklist)! אל תאשר בשום אופן.\n"
+                elif wl_status == 'whitelist':
+                    oauth_alert += "הערה: אפליקציה זו מופיעה ברשימת מאושרות (whitelist), אך עדיין מומלץ לבדוק את ההרשאות.\n"
+                else:
+                    oauth_alert += "שים לב: גם אם המסך נראה לגיטימי, תמיד בדוק את שם האפליקציה, המפתח, והרשאות המבוקשות. אם אינך מזהה את האפליקציה או לא ציפית למסך זה – אל תאשר!\n"
+                oauth_alert += "למידע נוסף על מתקפות OAUTH/Entra: https://www.microsoft.com/en-us/security/blog/2022/09/22/malicious-oauth-applications-used-to-compromise-email-servers-and-spread-spam/"
 
         response_json = {
             "score": score,
             "level": level,
             "reasons": reasons
         }
+        # Always add oauth_alert if consent screen detected, even if safe
         if oauth_alert:
             response_json["oauth_alert"] = oauth_alert
 
