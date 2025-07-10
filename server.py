@@ -13,6 +13,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import requests
+from urllib.parse import urlparse, parse_qs
 
 load_dotenv()
 
@@ -128,6 +129,19 @@ def check_url_safe_browsing(url):
         print(f"[SafeBrowsing] API error for {url}: {e}")
         return False
 
+SUSPICIOUS_CLIENT_IDS = [
+    "aebc6443-996d-45c2-90f0-388ff96faa56",  # VSCode
+]
+SUSPICIOUS_REDIRECT_URIS = [
+    "insiders.vscode.dev/redirect",
+    "vscode-redirect.azurewebsites.net"
+]
+
+def extract_oauth_params(url):
+    parsed = urlparse(url)
+    params = parse_qs(parsed.query)
+    return params
+
 @app.route("/")
 def home():
     return send_from_directory('.', 'index.html')
@@ -206,6 +220,17 @@ def analyze_message():
         if url_flagged:
             score = 100
             level = "phishing"
+
+        # --- בדיקת client_id/redirect_uri חשודים בכל URL בטקסט ---
+        for url in urls:
+            params = extract_oauth_params(url)
+            client_id = params.get('client_id', [''])[0]
+            redirect_uri = params.get('redirect_uri', [''])[0]
+            if client_id in SUSPICIOUS_CLIENT_IDS or any(s in redirect_uri for s in SUSPICIOUS_REDIRECT_URIS):
+                reasons.insert(0, f'⚠️ OAuth URL with suspicious client_id or redirect_uri detected! This is a known phishing pattern (see Volexity 2025).')
+                url_flagged = True
+                score = 100
+                level = "phishing"
 
         return jsonify({
             "score": score,
@@ -328,6 +353,19 @@ def analyze_image():
         if url_flagged:
             score = 100
             level = "phishing"
+
+        # --- בדיקת client_id/redirect_uri חשודים גם בטקסט שחולץ מתמונה ---
+        if 'extracted_text' in locals() and extracted_text:
+            urls = re.findall(url_pattern, extracted_text)
+            for url in urls:
+                params = extract_oauth_params(url)
+                client_id = params.get('client_id', [''])[0]
+                redirect_uri = params.get('redirect_uri', [''])[0]
+                if client_id in SUSPICIOUS_CLIENT_IDS or any(s in redirect_uri for s in SUSPICIOUS_REDIRECT_URIS):
+                    reasons.insert(0, f'⚠️ OAuth URL with suspicious client_id or redirect_uri detected! This is a known phishing pattern (see Volexity 2025).')
+                    url_flagged = True
+                    score = 100
+                    level = "phishing"
 
         # --- Smart OAuth/Entra Consent Screen Detection ---
         oauth_alert = None
