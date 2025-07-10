@@ -12,6 +12,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import requests
 
 load_dotenv()
 
@@ -95,6 +96,35 @@ def check_whitelist_blacklist(app_name, publisher):
         return 'whitelist'
     return 'unknown'
 
+GOOGLE_SAFE_BROWSING_API_KEY = "AIzaSyDwYZT2-OQTpk3ynfSXQJV_Q688xtQ5-PA"
+
+# בדיקת URL מול Google Safe Browsing API
+SAFE_BROWSING_URL = "https://safebrowsing.googleapis.com/v4/threatMatches:find?key=" + GOOGLE_SAFE_BROWSING_API_KEY
+
+def check_url_safe_browsing(url):
+    payload = {
+        "client": {
+            "clientId": "phishthephisher",
+            "clientVersion": "1.0"
+        },
+        "threatInfo": {
+            "threatTypes": ["MALWARE", "SOCIAL_ENGINEERING", "UNWANTED_SOFTWARE", "POTENTIALLY_HARMFUL_APPLICATION"],
+            "platformTypes": ["ANY_PLATFORM"],
+            "threatEntryTypes": ["URL"],
+            "threatEntries": [
+                {"url": url}
+            ]
+        }
+    }
+    try:
+        resp = requests.post(SAFE_BROWSING_URL, json=payload, timeout=5)
+        resp.raise_for_status()
+        data = resp.json()
+        return bool(data.get("matches"))
+    except Exception as e:
+        print(f"Safe Browsing API error: {e}")
+        return False
+
 @app.route("/")
 def home():
     return send_from_directory('.', 'index.html')
@@ -160,7 +190,19 @@ def analyze_message():
 
         # פיצול הסבר לנקודות
         reasons = re.split(r'\. |\n', reply)
-        reasons = [r.strip("•*- ") for r in reasons if r.strip()]
+        reasons = [r.strip("•*- ") for r in reasons if isinstance(r, str) and r.strip()]
+
+        # --- בדיקת Google Safe Browsing לכל URL בטקסט ---
+        url_pattern = r'(https?://[\w\.-]+(?:/[\w\.-?&=%]*)?)'
+        urls = re.findall(url_pattern, message)
+        url_flagged = False
+        for url in urls:
+            if check_url_safe_browsing(url):
+                reasons.insert(0, f'⚠️ כתובת {url} מאומתת כפישינג ע"י רשימות Google Safe Browsing!')
+                url_flagged = True
+        if url_flagged:
+            score = 100
+            level = "phishing"
 
         return jsonify({
             "score": score,
@@ -269,7 +311,20 @@ def analyze_image():
 
         # Split explanation into points
         reasons = re.split(r'\. |\n', reply)
-        reasons = [r.strip("•*- ") for r in reasons if r.strip()]
+        reasons = [r.strip("•*- ") for r in reasons if isinstance(r, str) and r.strip()]
+
+        # --- בדיקת Google Safe Browsing לכל URL שחולץ מהתמונה ---
+        url_pattern = r'(https?://[\w\.-]+(?:/[\w\.-?&=%]*)?)'
+        url_flagged = False
+        if 'extracted_text' in locals() and extracted_text:
+            urls = re.findall(url_pattern, extracted_text)
+            for url in urls:
+                if check_url_safe_browsing(url):
+                    reasons.insert(0, f'⚠️ כתובת {url} מאומתת כפישינג ע"י רשימות Google Safe Browsing!')
+                    url_flagged = True
+        if url_flagged:
+            score = 100
+            level = "phishing"
 
         # --- Smart OAuth/Entra Consent Screen Detection ---
         oauth_alert = None
