@@ -232,6 +232,15 @@ form.addEventListener("submit", async (e) => {
   });
 }
 
+// --- כפתור מחיקה מהירה לתיבת הטקסט ---
+const clearBtn = document.getElementById("clear-message");
+if (clearBtn && input) {
+  clearBtn.addEventListener("click", () => {
+    input.value = "";
+    input.focus();
+  });
+}
+
 // === Registration form handler ===
 const registerForm = document.getElementById("register-form");
 if (registerForm) {
@@ -469,7 +478,9 @@ if (imageInput) {
     // Reset button
     uploadBtn.disabled = false;
     uploadBtn.classList.remove("button-loading");
-    uploadBtn.innerHTML = "📁 Upload Image";
+    uploadBtn.innerHTML = "\ud83d\udcc1 Upload Image";
+    // --- איפוס קלט קובץ כדי לאפשר העלאה חוזרת ---
+    imageInput.value = "";
   });
 }
 

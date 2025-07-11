@@ -35,7 +35,10 @@
 
       <!-- 👇 טופס לזיהוי הודעות -->
       <form id="analyze-form" class="input-card">
-        <textarea id="message" placeholder="Paste your suspicious message here..."></textarea>
+        <div class="textarea-wrapper" style="position:relative;">
+          <textarea id="message" placeholder="Paste your suspicious message here..."></textarea>
+          <button type="button" id="clear-message" title="Clear" style="position:absolute;top:10px;right:10px;background:transparent;border:none;font-size:20px;cursor:pointer;line-height:1;">&#10006;</button>
+        </div>
         <div class="usage-counter">
           <span id="remaining-analyses">3</span> free analyses remaining
           <button id="reset-usage" style="margin-left: 10px; font-size: 12px; padding: 2px 8px;">Reset</button>
