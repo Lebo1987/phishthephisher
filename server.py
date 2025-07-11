@@ -97,12 +97,19 @@ def check_whitelist_blacklist(app_name, publisher):
         return 'whitelist'
     return 'unknown'
 
-GOOGLE_SAFE_BROWSING_API_KEY = "AIzaSyDwYZT2-OQTpk3ynfSXQJV_Q688xtQ5-PA"
+GOOGLE_SAFE_BROWSING_API_KEY = os.getenv("GOOGLE_API_KEY")
 
 # בדיקת URL מול Google Safe Browsing API
-SAFE_BROWSING_URL = "https://safebrowsing.googleapis.com/v4/threatMatches:find?key=" + GOOGLE_SAFE_BROWSING_API_KEY
+if GOOGLE_SAFE_BROWSING_API_KEY:
+    SAFE_BROWSING_URL = "https://safebrowsing.googleapis.com/v4/threatMatches:find?key=" + GOOGLE_SAFE_BROWSING_API_KEY
+else:
+    SAFE_BROWSING_URL = None
+
 
 def check_url_safe_browsing(url):
+    if not SAFE_BROWSING_URL:
+        print("[SafeBrowsing] API key not set, skipping check.")
+        return False
     print(f"[SafeBrowsing] Checking URL: {url}")
     payload = {
         "client": {
@@ -212,14 +219,11 @@ def analyze_message():
         # --- בדיקת Google Safe Browsing לכל URL בטקסט ---
         url_pattern = r'(https?://[\w\.-]+(?:/[\w\.-?&=%]*)?)'
         urls = re.findall(url_pattern, message)
-        url_flagged = False
         for url in urls:
             if check_url_safe_browsing(url):
                 reasons.insert(0, f'⚠️ כתובת {url} מאומתת כפישינג ע"י רשימות Google Safe Browsing!')
-                url_flagged = True
-        if url_flagged:
-            score = 100
-            level = "phishing"
+                score = 100
+                level = "phishing"
 
         # --- בדיקת client_id/redirect_uri חשודים בכל URL בטקסט ---
         for url in urls:
@@ -228,7 +232,6 @@ def analyze_message():
             redirect_uri = params.get('redirect_uri', [''])[0]
             if client_id in SUSPICIOUS_CLIENT_IDS or any(s in redirect_uri for s in SUSPICIOUS_REDIRECT_URIS):
                 reasons.insert(0, f'⚠️ OAuth URL with suspicious client_id or redirect_uri detected! This is a known phishing pattern (see Volexity 2025).')
-                url_flagged = True
                 score = 100
                 level = "phishing"
 
@@ -343,27 +346,19 @@ def analyze_image():
 
         # --- בדיקת Google Safe Browsing לכל URL שחולץ מהתמונה ---
         url_pattern = r'(https?://[\w\.-]+(?:/[\w\.-?&=%]*)?)'
-        url_flagged = False
         if 'extracted_text' in locals() and extracted_text:
             urls = re.findall(url_pattern, extracted_text)
             for url in urls:
                 if check_url_safe_browsing(url):
                     reasons.insert(0, f'⚠️ כתובת {url} מאומתת כפישינג ע"י רשימות Google Safe Browsing!')
-                    url_flagged = True
-        if url_flagged:
-            score = 100
-            level = "phishing"
-
-        # --- בדיקת client_id/redirect_uri חשודים גם בטקסט שחולץ מתמונה ---
-        if 'extracted_text' in locals() and extracted_text:
-            urls = re.findall(url_pattern, extracted_text)
+                    score = 100
+                    level = "phishing"
             for url in urls:
                 params = extract_oauth_params(url)
                 client_id = params.get('client_id', [''])[0]
                 redirect_uri = params.get('redirect_uri', [''])[0]
                 if client_id in SUSPICIOUS_CLIENT_IDS or any(s in redirect_uri for s in SUSPICIOUS_REDIRECT_URIS):
                     reasons.insert(0, f'⚠️ OAuth URL with suspicious client_id or redirect_uri detected! This is a known phishing pattern (see Volexity 2025).')
-                    url_flagged = True
                     score = 100
                     level = "phishing"
 
