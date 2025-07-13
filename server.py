@@ -202,7 +202,9 @@ def analyze_message():
 
         # ניסיון לחלץ ציון מתוך התגובה
         import re
-        score_match = re.search(r'(\d{1,3})\s*[%/100]?', reply)
+        score_match = re.search(r'Risk Score[:\s-]*(\d{1,3})', reply)
+        if not score_match:
+            score_match = re.search(r'(\d{1,3})\s*[%/100]?', reply)
         score = int(score_match.group(1)) if score_match else 50
 
         if score >= 85:
@@ -328,9 +330,11 @@ def analyze_image():
             )
             reply = response.choices[0].message.content.strip()
 
-        # Extract score from response
+        # Extract score from response (image)
         import re
-        score_match = re.search(r'(\d{1,3})\s*[%/100]?', reply)
+        score_match = re.search(r'Risk Score[:\s-]*(\d{1,3})', reply)
+        if not score_match:
+            score_match = re.search(r'(\d{1,3})\s*[%/100]?', reply)
         score = int(score_match.group(1)) if score_match else 50
 
         if score >= 85:
