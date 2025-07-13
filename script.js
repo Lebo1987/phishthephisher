@@ -498,26 +498,26 @@ function formatBullets(input) {
 }
 
 function showResult(result) {
-  // דוגמה: result = { risk: 'red'|'orange'|'green', confidence: 95, desc: '...', ... }
+  // result = { score: 75, confidence: 75, desc: '...', ... }
+  const confidence = result.score !== undefined ? result.score : (result.confidence !== undefined ? result.confidence : 0);
   let icon = '❌', title = 'Scam Detected!', color = 'red', desc = 'This message is highly likely to be a scam.';
-  if (result.risk === 'orange') {
-    icon = '⚠️';
-    title = 'Suspicious';
-    color = 'orange';
-    desc = 'This message may be suspicious.';
-  } else if (result.risk === 'green') {
+  if (confidence <= 35) {
     icon = '✅';
     title = 'Safe';
     color = 'green';
     desc = 'No scam detected.';
+  } else if (confidence <= 70) {
+    icon = '⚠️';
+    title = 'Suspicious';
+    color = 'orange';
+    desc = 'This message may be suspicious.';
   }
-  // אם יש תיאור מותאם מהשרת, נשתמש בו (רק שורה קצרה)
   if (result.desc) desc = result.desc;
   const html = `
     <div class="result-card ${color}">
       <div class="result-icon">${icon}</div>
       <div class="result-title">${title}</div>
-      <div class="result-confidence">${result.confidence || ''}% confidence</div>
+      <div class="result-confidence">${confidence}% confidence</div>
       <div class="result-desc">${desc}</div>
       <button class="result-action" onclick="location.reload()">Try Another</button>
     </div>
