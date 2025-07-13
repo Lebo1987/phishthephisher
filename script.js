@@ -346,7 +346,7 @@ async function performAnalysis() {
         reasonsArray = data.reasons.split(/(?<=[.!?])\s+/);
       }
 
-      const confidence = data.score || 90;
+      const confidence = data.score !== undefined ? data.score : 90;
 
       let colorClass = "green";
       if (confidence >= 71) {
@@ -448,7 +448,7 @@ if (imageInput) {
           reasonsArray = data.reasons.split(/(?<=[.!?])\s+/);
         }
 
-        const confidence = data.score || 90;
+        const confidence = data.score !== undefined ? data.score : 90;
 
         let colorClass = "green";
         if (confidence >= 71) {
