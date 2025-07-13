@@ -349,9 +349,9 @@ async function performAnalysis() {
       const confidence = data.score || 90;
 
       let colorClass = "green";
-      if (data.level === "phishing") {
+      if (confidence >= 71) {
         colorClass = "red";
-      } else if (data.level === "suspicious") {
+      } else if (confidence >= 36) {
         colorClass = "orange";
       }
 
@@ -364,7 +364,7 @@ async function performAnalysis() {
       `;
 
       // הצג disclaimer רק בתוצאות ירוקות/כתומות
-      if (data.level === "safe" || data.level === "suspicious") {
+      if (confidence <= 70) {
         const disclaimer = document.createElement('div');
         disclaimer.className = 'disclaimer';
         disclaimer.innerHTML = '<span style="font-size:1.1em;">ℹ️</span> Even though we strive for 100% detection, use caution and your best judgment.';
@@ -451,9 +451,9 @@ if (imageInput) {
         const confidence = data.score || 90;
 
         let colorClass = "green";
-        if (data.level === "phishing") {
+        if (confidence >= 71) {
           colorClass = "red";
-        } else if (data.level === "suspicious") {
+        } else if (confidence >= 36) {
           colorClass = "orange";
         }
 
