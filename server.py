@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, redirect
 from flask_cors import CORS
 from openai import OpenAI
 import os
@@ -19,6 +19,13 @@ load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
+
+@app.before_request
+def redirect_to_www():
+    url = request.url
+    # הפנה רק אם מגיעים מבלי www
+    if request.host == "phishthephisher.com":
+        return redirect(url.replace("://phishthephisher.com", "://www.phishthephisher.com"), code=301)
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
@@ -198,7 +205,11 @@ def analyze_message():
             ]
         )
 
-        reply = response.choices[0].message.content.strip()
+        reply = response.choices[0].message.content
+        if reply:
+            reply = reply.strip()
+        else:
+            reply = ""
 
         # ניסיון לחלץ ציון מתוך התגובה
         import re
@@ -216,7 +227,7 @@ def analyze_message():
 
         # פיצול הסבר לנקודות
         reasons = re.split(r'\. |\n', reply)
-        reasons = [r.strip("•*- ") for r in reasons if isinstance(r, str) and r.strip()]
+        reasons = [r.strip("•*- ") for r in reasons if isinstance(r, str) and r and r.strip()]
 
         # --- בדיקת Google Safe Browsing לכל URL בטקסט ---
         url_pattern = r'(https?://[\w\.-]+(?:/[\w\.-?&=%]*)?)'
@@ -301,7 +312,11 @@ def analyze_image():
                 max_tokens=300
             )
 
-            reply = response.choices[0].message.content.strip()
+            reply = response.choices[0].message.content
+            if reply:
+                reply = reply.strip()
+            else:
+                reply = ""
             # --- Smart OAuth/Entra detection on extracted text from Vision (if possible) ---
             extracted_text = extract_text_with_ocr(image)
         
@@ -328,7 +343,11 @@ def analyze_image():
                     {"role": "user", "content": f"Analyze this text for phishing risk: {extracted_text}"}
                 ]
             )
-            reply = response.choices[0].message.content.strip()
+            reply = response.choices[0].message.content
+            if reply:
+                reply = reply.strip()
+            else:
+                reply = ""
 
         # Extract score from response (image)
         import re
@@ -346,7 +365,7 @@ def analyze_image():
 
         # Split explanation into points
         reasons = re.split(r'\. |\n', reply)
-        reasons = [r.strip("•*- ") for r in reasons if isinstance(r, str) and r.strip()]
+        reasons = [r.strip("•*- ") for r in reasons if isinstance(r, str) and r and r.strip()]
 
         # --- בדיקת Google Safe Browsing לכל URL שחולץ מהתמונה ---
         url_pattern = r'(https?://[\w\.-]+(?:/[\w\.-?&=%]*)?)'
