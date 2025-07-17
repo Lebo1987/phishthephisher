@@ -540,10 +540,13 @@ function showResult(result) {
 // שליחת אירוע המרה ל-Google Analytics
 function sendConversionEvent(action) {
   if (typeof gtag === "function") {
+    console.log("[Analytics] Sending conversion event:", action);
     gtag('event', 'conversion', {
       'event_category': 'engagement',
       'event_label': action // לדוג' 'analyze_text' או 'analyze_image'
     });
+  } else {
+    console.warn("[Analytics] gtag function not found! Event not sent.", action);
   }
 }
 
