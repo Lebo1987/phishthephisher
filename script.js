@@ -332,11 +332,17 @@ async function performAnalysis() {
     });
 
     const data = await response.json();
-    console.log("📦 API response:", data);
+    console.log("\ud83d\udce6 API response:", data);
 
     if (data.level && data.reasons) {
       // Decrease usage count
       decreaseUsage();
+      
+      // === Google Conversion Tracking ===
+      if (typeof gtag === 'function') {
+        gtag('event', 'conversion', {'send_to': 'AW-936635291/p-2GCO_f2fAaEJvXz74P'});
+      }
+      // === End Google Conversion Tracking ===
       
       let reasonsArray = [];
 
@@ -434,11 +440,17 @@ if (imageInput) {
       });
 
       const data = await response.json();
-      console.log("📦 Image API response:", data);
+      console.log("\ud83d\udce6 Image API response:", data);
 
       if (data.level && data.reasons) {
         // Decrease usage count
         decreaseUsage();
+        
+        // === Google Conversion Tracking ===
+        if (typeof gtag === 'function') {
+          gtag('event', 'conversion', {'send_to': 'AW-936635291/p-2GCO_f2fAaEJvXz74P'});
+        }
+        // === End Google Conversion Tracking ===
         
         let reasonsArray = [];
 
@@ -523,4 +535,25 @@ function showResult(result) {
     </div>
   `;
   document.getElementById('result').innerHTML = html;
+}
+
+// שליחת אירוע המרה ל-Google Analytics
+function sendConversionEvent(action) {
+  if (typeof gtag === "function") {
+    gtag('event', 'conversion', {
+      'event_category': 'engagement',
+      'event_label': action // לדוג' 'analyze_text' או 'analyze_image'
+    });
+  }
+}
+
+if (button) {
+  button.addEventListener("click", function(event) {
+    sendConversionEvent('analyze_text');
+  });
+}
+if (imageInput) {
+  imageInput.addEventListener("change", function(event) {
+    sendConversionEvent('analyze_image');
+  });
 }
